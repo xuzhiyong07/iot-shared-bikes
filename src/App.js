@@ -1,11 +1,9 @@
-import Demo from './pages/demo'
+import React, { Component } from 'react'
 
-function App() {
-  return (
-    <div className="App">
-      <Demo />
-    </div>
-  )
+export default class App extends Component {
+  render() {
+    return (
+      <div>{ this.props.children }</div>
+    )
+  }
 }
-
-export default App

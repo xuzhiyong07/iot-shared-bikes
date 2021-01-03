@@ -5,21 +5,44 @@ import {
     Button
 } from 'antd'
 import './index.less'
-
+import axios from '../../axios'
 export default class index extends Component {
     state = {
         userName: 'HEHE',
-        nowDate: ''
+        nowDate: '',
+        dateInterval: null
     }
 
-    date = setInterval(() => {
+    componentDidMount() {
+        const dateInterval = setInterval(() => {
+            this.setState({
+                nowDate: new Date().toLocaleString()
+            })
+        }, 1000)
         this.setState({
-            nowDate: new Date().toLocaleString()
+            dateInterval
         })
-    }, 1000)
+        this.getWeatherApi()
+    }
+    
 
     componentWillUnmount() {
-        clearTimeout(this.date)
+        clearTimeout(this.dateInterval)
+    }
+
+    /**
+     * 获取百度天气
+     */
+    getWeatherApi () {
+        const city = '101021400'
+        const ak = 'BjWbdlGqQp5TUkKVOTIZsoROHvE9a6bK'
+        axios.jsonp({
+            url: `http://api.map.baidu.com/telematics/v3/weather?district_id=${city}&data_type=all&coordtype=wgs84&output=json&ak=${ak}`
+        }).then(res => {
+            console.log('000')
+        }).catch(err => {
+            console.log(err)
+        })
     }
 
     render() {
