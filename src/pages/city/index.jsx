@@ -5,8 +5,7 @@ import {
     Table,
     Form,
     Select,
-    Modal,
-    message
+    Modal
 } from 'antd'
 import axios from './../../axios'
 import { pagination } from './../../utils/utils'
@@ -15,36 +14,53 @@ import './index.less'
 const FormItem = Form.Item
 const Option = Select.Option
 
+const list = [
+    {
+        key: 1,
+        id: 12,
+        name: '上海',
+        mode: 1,
+        op_mode: '1',
+        franchisee_name: 'n',
+        city_admins: 'xu,pang',
+        open_time: '2021-01-04 10:23:30',
+        update_time: '2021-01-04 10:23:30',
+        sys_user_name: 'xuzhiy'
+    }
+]
+
 export default class City extends React.Component{
     state = {
-        list: [],
+        list: list,
         isShowOpenCity: false
     }
+
     params = {
         page: 1
     }
+
     componentDidMount(){
         // this.requestList()
     }
 
     // 默认请求我们的接口数据
-    requestList = ()=>{
-        let _this = this
+    requestList = () => {
+        const _this = this
         axios.ajax({
             url: '/open_city',
-            data:{
-                params:{
+            data: {
+                params: {
                     page:this.params.page
                 }
             }
         }).then((res)=>{
-            let list = res.result.item_list.map((item, index) => {
+            const list = res.result.item_list.map((item, index) => {
                 item.key = index
                 return item
             })
             this.setState({
-                list:list,
-                pagination: pagination(res,(current)=>{
+                list: list,
+                pagination: pagination(res, current => {
                     _this.params.page = current
                     _this.requestList()
                 })
@@ -53,35 +69,25 @@ export default class City extends React.Component{
     }
 
     // 开通城市
-    handleOpenCity = ()=>{
+    handleOpenCity = () => {
         this.setState({
             isShowOpenCity:true
         })
     }
     // 城市开通提交
-    handleSubmit = ()=>{
-        let cityInfo = this.cityForm.props.form.getFieldsValue()
-        console.log(cityInfo)
-        axios.ajax({
-            url:'/city/open',
-            data:{
-                params:cityInfo
-            }
-        }).then((res)=>{
-            if(res.code === '0'){
-                message.success('开通成功')
-                this.setState({
-                    isShowOpenCity:false
-                })
-                this.requestList()
-            }
-        })
+    handleSubmit = () => {
+        // const cityInfo = this.cityForm.props.form.getFieldsValue()
     }
-    render(){
+    render() {
         const columns = [
             {
                 title: '序号',
-                dataIndex: 'id'
+                dataIndex: 'id',
+                width: 70,
+                align: 'center',
+                render: (text, record, index) => {
+                    return index + 1
+                }
             },
             {
                 title: '城市ID',
@@ -135,7 +141,7 @@ export default class City extends React.Component{
                         pagination={this.state.pagination}
                     />
                 </div>
-                {/* <Modal 
+                <Modal 
                     title="开通城市"
                     visible={this.state.isShowOpenCity}
                     onCancel={()=>{
@@ -146,7 +152,7 @@ export default class City extends React.Component{
                     onOk={this.handleSubmit}
                 >
                     <OpenCityForm wrappedComponentRef={(inst)=>{this.cityForm = inst}}/>
-                </Modal> */}
+                </Modal>
             </div>
         )
     }

@@ -58,7 +58,7 @@ export default class index extends Component {
                     <Col span="4" className="breadcrumb-title">首页</Col>
                     <Col span="20" className="weather">
                         <span className="date">{ this.state.nowDate }</span>
-                        <span className="weather-detail">晴</span>
+                        {/* <span className="weather-detail">晴</span> */}
                     </Col>
                 </Row>
             </div>
