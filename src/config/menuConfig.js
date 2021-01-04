@@ -1,15 +1,18 @@
 const menuList = [
     {
         title: '首页',
-        key: '/admin/home'
+        key: '/admin/home',
+        icon: 'iconhome'
     },
     {
         title: '城市管理',
-        key: '/admin/city'
+        key: '/admin/city',
+        icon: 'iconcity'
     },
     {
         title: '订单管理',
         key: '/admin/order',
+        icon: 'iconorder',
         btnList: [
             {
                 title: '订单详情',
@@ -23,15 +26,18 @@ const menuList = [
     },
     {
         title: '员工管理',
-        key: '/admin/user'
+        key: '/admin/user',
+        icon: 'iconyuangong'
     },
     {
         title: '车辆地图',
-        key: '/admin/bikeMap'
+        key: '/admin/bikeMap',
+        icon: 'iconmap'
     },
     {
         title: '数据可视化',
         key: '/admin/charts',
+        icon: 'iconchart',
         children: [
             {
                 title: '柱形图',
@@ -49,7 +55,8 @@ const menuList = [
     },
     {
         title: '权限设置',
-        key: '/admin/permission'
+        key: '/admin/permission',
+        icon: 'iconquanxianshezhi'
     },
 ];
 export default menuList;

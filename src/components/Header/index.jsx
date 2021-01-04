@@ -22,7 +22,7 @@ export default class index extends Component {
         this.setState({
             dateInterval
         })
-        this.getWeatherApi()
+        // this.getWeatherApi()
     }
     
 
@@ -41,7 +41,7 @@ export default class index extends Component {
         }).then(res => {
             console.log('000')
         }).catch(err => {
-            console.log(err)
+            // console.log(err)
         })
     }
 

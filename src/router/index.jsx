@@ -8,6 +8,7 @@ import App from '../App'
 import Login from '../pages/login'
 import Admin from '../Admin'
 import Home from '../pages/home'
+import City from '../pages/city'
 import NotFound from '../pages/notfound'
 
 export default class IRouter extends Component {
@@ -20,6 +21,7 @@ export default class IRouter extends Component {
                         <Admin>
                             <Switch>
                                 <Route path="/admin/home" component={Home} />
+                                <Route path="/admin/city" component={City} />
                                 <Route component={NotFound} />
                             </Switch>
                         </Admin>
