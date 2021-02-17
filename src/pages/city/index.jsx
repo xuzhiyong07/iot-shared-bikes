@@ -7,31 +7,14 @@ import {
     Select,
     Modal
 } from 'antd'
-import axios from './../../axios'
-import { pagination } from './../../utils/utils'
 import './index.less'
 
 const FormItem = Form.Item
 const Option = Select.Option
 
-const list = [
-    {
-        key: 1,
-        id: 12,
-        name: '上海',
-        mode: 1,
-        op_mode: '1',
-        franchisee_name: 'n',
-        city_admins: 'xu,pang',
-        open_time: '2021-01-04 10:23:30',
-        update_time: '2021-01-04 10:23:30',
-        sys_user_name: 'xuzhiy'
-    }
-]
-
 export default class City extends React.Component{
     state = {
-        list: list,
+        list: [],
         isShowOpenCity: false
     }
 
@@ -40,31 +23,20 @@ export default class City extends React.Component{
     }
 
     componentDidMount(){
-        // this.requestList()
+        this.requestList()
     }
 
     // 默认请求我们的接口数据
     requestList = () => {
-        const _this = this
-        axios.ajax({
-            url: '/open_city',
-            data: {
-                params: {
-                    page:this.params.page
-                }
-            }
-        }).then((res)=>{
-            const list = res.result.item_list.map((item, index) => {
-                item.key = index
-                return item
-            })
+        fetch('http://localhost:3636/open_city', {
+            method: 'GET'
+        }).then(res => res.json()).then(res => {
+            const list = res.list
             this.setState({
-                list: list,
-                pagination: pagination(res, current => {
-                    _this.params.page = current
-                    _this.requestList()
-                })
+                list: list
             })
+        }).catch(err => {
+            console.log(err)
         })
     }
 
