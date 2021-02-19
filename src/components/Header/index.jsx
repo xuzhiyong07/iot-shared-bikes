@@ -5,12 +5,14 @@ import {
     Button
 } from 'antd'
 import './index.less'
-import axios from '../../axios'
+// import fetchJsonp from 'fetch-jsonp'
+const AMap = window.AMap
 export default class index extends Component {
     state = {
         userName: 'HEHE',
         nowDate: '',
-        dateInterval: null
+        dateInterval: null,
+        whether: {}
     }
 
     componentDidMount() {
@@ -22,7 +24,7 @@ export default class index extends Component {
         this.setState({
             dateInterval
         })
-        // this.getWeatherApi()
+        this.getWeatherApi()
     }
     
 
@@ -34,14 +36,21 @@ export default class index extends Component {
      * 获取百度天气
      */
     getWeatherApi () {
-        const city = '101021400'
-        const ak = 'BjWbdlGqQp5TUkKVOTIZsoROHvE9a6bK'
-        axios.jsonp({
-            url: `http://api.map.baidu.com/telematics/v3/weather?district_id=${city}&data_type=all&coordtype=wgs84&output=json&ak=${ak}`
-        }).then(res => {
-            console.log('000')
-        }).catch(err => {
-            // console.log(err)
+        const _this = this
+        AMap.plugin('AMap.Weather', function() {
+            //创建天气查询实例
+            var weather = new AMap.Weather()
+        
+            //执行实时天气信息查询
+            weather.getLive('上海市', function(err, data) {
+                if (err) {
+                    console.log(err)
+                    return
+                }
+                _this.setState({
+                    whether: data
+                })
+            });
         })
     }
 
@@ -58,7 +67,16 @@ export default class index extends Component {
                     <Col span="4" className="breadcrumb-title">首页</Col>
                     <Col span="20" className="weather">
                         <span className="date">{ this.state.nowDate }</span>
-                        {/* <span className="weather-detail">晴</span> */}
+                        {
+                            this.state.whether.weather && (
+                                <span className="weather-detail">
+                                    <span style={{ marginLeft: 8 }}>天气: { this.state.whether.weather }</span>
+                                    <span style={{ marginLeft: 8 }}>温度: { this.state.whether.temperature }℃</span>
+                                    <span style={{ marginLeft: 8 }}>风向: { this.state.whether.windDirection }</span>
+                                    <span style={{ marginLeft: 8 }}>风力: { this.state.whether.windPower }</span>
+                                </span>
+                            )
+                        }
                     </Col>
                 </Row>
             </div>

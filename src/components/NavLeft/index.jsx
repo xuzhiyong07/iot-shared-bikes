@@ -11,13 +11,21 @@ const { SubMenu } = Menu
 
 export default class index extends Component {
     state = {
-        menuTreeNodes: []
+        menuTreeNodes: [],
+        selectedKeys: []
     }
     componentDidMount() {
         const menuTreeNodes = this.renderMenu(menuList)
         this.setState({
-            menuTreeNodes
+            menuTreeNodes,
+            selectedKeys: [window.location.hash.slice(1)]
         })
+        // 监听路由变化
+        onhashchange = (e) => {
+            this.setState({
+                selectedKeys: [e.newURL.split('#')[1]]
+            })
+        }
     }
     /**
      * 生成导航菜单
@@ -52,6 +60,7 @@ export default class index extends Component {
                     theme="dark"
                     triggerSubMenuAction="click"
                     mode="inline"
+                    selectedKeys={ this.state.selectedKeys }
                 >
                     { this.state.menuTreeNodes }
                 </Menu>
