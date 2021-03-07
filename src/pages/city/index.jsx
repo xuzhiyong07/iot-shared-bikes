@@ -1,12 +1,6 @@
 import React from 'react'
-import {
-    Card,
-    Button,
-    Table,
-    Form,
-    Select,
-    Modal
-} from 'antd'
+import { Card, Button, Table, Form, Select, Modal } from 'antd'
+import { getOpenCity } from '../../api/fetch'
 import './index.less'
 
 const FormItem = Form.Item
@@ -28,9 +22,7 @@ export default class City extends React.Component{
 
     // 默认请求我们的接口数据
     requestList = () => {
-        fetch('http://localhost:3636/open_city', {
-            method: 'GET'
-        }).then(res => res.json()).then(res => {
+        getOpenCity().then(res => {
             const list = res.list
             this.setState({
                 list: list
