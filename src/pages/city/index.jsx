@@ -1,12 +1,18 @@
 import React from 'react'
 import { Card, Button, Table, Form, Select, Modal } from 'antd'
 import { getOpenCity } from '../../api/fetch'
+import { connect } from 'react-redux'
 import './index.less'
 
 const FormItem = Form.Item
 const Option = Select.Option
 
-export default class City extends React.Component{
+export default connect(
+    state => ({count: state}),
+    {
+        add: () => ({type: 'ADD'})
+    }
+)(class City extends React.Component{
     state = {
         list: [],
         isShowOpenCity: false
@@ -120,7 +126,7 @@ export default class City extends React.Component{
             </div>
         )
     }
-}
+})
 
 class FilterForm extends React.Component{
     render() {
