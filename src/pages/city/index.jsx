@@ -1,7 +1,9 @@
 import React from 'react'
-import { Card, Button, Table, Form, Select, Modal } from 'antd'
+import { Card, Button, Table, Form, Select, Modal, message, Radio } from 'antd'
 import { getOpenCity } from '../../api/fetch'
 import { connect } from 'react-redux'
+import { OPERATEPATTERN, BIKEUSEPATTERN, CITYENUM } from '../../common/enumeration'
+import { formatByEnum } from '../../utils/utils'
 import './index.less'
 
 const FormItem = Form.Item
@@ -29,10 +31,14 @@ export default connect(
     // 默认请求我们的接口数据
     requestList = () => {
         getOpenCity().then(res => {
-            const list = res.list
-            this.setState({
-                list: list
-            })
+            if (res.code === 0) {
+                const list = res.result
+                this.setState({
+                    list: list
+                })
+            } else {
+                message.error(res.message)
+            }
         }).catch(err => {
             console.log(err)
         })
@@ -45,8 +51,11 @@ export default connect(
         })
     }
     // 城市开通提交
-    handleSubmit = () => {
-        // const cityInfo = this.cityForm.props.form.getFieldsValue()
+    saveOpenCity = values => {
+        console.log(values)
+        this.setState({
+            isShowOpenCity: false
+        })
     }
     render() {
         const columns = [
@@ -69,11 +78,13 @@ export default connect(
             },
             {
                 title: '用车模式',
-                dataIndex: 'mode'
+                dataIndex: 'mode',
+                render: mode => formatByEnum(mode, BIKEUSEPATTERN)
             },
             {
                 title: '营运模式',
-                dataIndex: 'op_mode'
+                dataIndex: 'op_mode',
+                render: op_mode => formatByEnum(op_mode, OPERATEPATTERN)
             },
             {
                 title: '授权加盟商',
@@ -81,7 +92,13 @@ export default connect(
             },
             {
                 title: '城市管理员',
-                dataIndex: 'city_admins'
+                dataIndex: 'city_admins',
+                render: city_admins => {
+                    if (!city_admins) {
+                        return ''
+                    }
+                    return city_admins.map(admin => admin.name).join(',')
+                }
             },
             {
                 title: '城市开通时间',
@@ -99,7 +116,9 @@ export default connect(
         return (
             <div className="city">
                 <Card>
-                    <FilterForm />
+                    <FilterForm
+                        requestList={() => this.requestList()}
+                    />
                 </Card>
                 <Card style={{marginTop:10}}>
                     <Button type="primary" onClick={this.handleOpenCity}>开通城市</Button>
@@ -111,71 +130,75 @@ export default connect(
                         pagination={this.state.pagination}
                     />
                 </div>
-                <Modal 
-                    title="开通城市"
-                    visible={this.state.isShowOpenCity}
-                    onCancel={()=>{
-                        this.setState({
-                            isShowOpenCity:false
-                        })
-                    }}
-                    onOk={this.handleSubmit}
-                >
-                    <OpenCityForm wrappedComponentRef={(inst)=>{this.cityForm = inst}}/>
-                </Modal>
+                {
+                    this.state.isShowOpenCity &&
+                    <Modal 
+                        title="开通城市"
+                        destroyOnClose={true}
+                        keyboard={false}
+                        maskClosable={false}
+                        visible={this.state.isShowOpenCity}
+                        onCancel={() => {
+                            this.setState({
+                                isShowOpenCity: false
+                            })
+                        }}
+                        footer={null}
+                    >
+                        <OpenCityForm
+                            sendValues={values => this.saveOpenCity(values)}
+                            cancelModal={() => this.setState({isShowOpenCity: false})}
+                        />
+                    </Modal>
+                }
+                
             </div>
         )
     }
 })
 
 class FilterForm extends React.Component{
+    formRef = React.createRef()
+    /**
+     * 重置查询条件
+     */
+    resetSearchForm = () => {
+        this.formRef.current.resetFields()
+        this.props.requestList()
+    }
     render() {
         return (
-            <Form layout="inline">
-                <FormItem label="城市">
-                    <Select
-                        style={{ width: 100 }}
-                        placeholder="全部"
-                    >
-                        <Option value="">全部</Option>
-                        <Option value="1">北京市</Option>
-                        <Option value="2">天津市</Option>
-                        <Option value="3">深圳市</Option>
+            <Form layout="inline" ref={this.formRef} onFinish={values => this.props.requestList(values)}>
+                <FormItem label="开通城市" name="openCity">
+                    <Select style={{ width: 160 }} allowClear placeholder="请选择开通城市">
+                        {
+                            CITYENUM.map((item, index) => {
+                                return <Option key={index} value={item.value}>{item.label}</Option>
+                            })
+                        }
                     </Select>
                 </FormItem>
-                <FormItem label="用车模式">
-                    <Select
-                        style={{ width: 120 }}
-                        placeholder="全部"
-                    >
-                        <Option value="">全部</Option>
-                        <Option value="1">指定停车点模式</Option>
-                        <Option value="2">禁停区模式</Option>
+                <FormItem label="用车模式" name="bikeUsePattern">
+                    <Select style={{ width: 160 }} allowClear placeholder="请选择用车模式">
+                        {
+                            BIKEUSEPATTERN.map((item, index) => {
+                                return <Option key={index} value={item.value}>{item.label}</Option>
+                            })
+                        }
                     </Select>
                 </FormItem>
-                <FormItem label="营运模式">
-                    <Select
-                        style={{ width: 80 }}
-                        placeholder="全部"
-                    >
-                        <Option value="">全部</Option>
-                        <Option value="1">自营</Option>
-                        <Option value="2">加盟</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="加盟商授权状态">
-                    <Select
-                        style={{ width: 100 }}
-                        placeholder="全部"
-                    >
-                        <Option value="">全部</Option>
-                        <Option value="1">已授权</Option>
-                        <Option value="2">未授权</Option>
+                <FormItem label="营运模式" name="operatPattern">
+                    <Select style={{ width: 160 }} allowClear placeholder="请选择营运模式">
+                        {
+                            OPERATEPATTERN.map((item, index) => {
+                                return <Option key={index} value={item.value}>{item.label}</Option>
+                            })
+                        }
                     </Select>
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" style={{margin:'0 20px'}}>查询</Button>
-                    <Button>重置</Button>
+                    <Button type="primary" htmlType="submit" style={{margin:'0 20px'}}>查询</Button>
+                    <Button onClick={this.resetSearchForm}>重置</Button>
                 </FormItem>
             </Form>
         )
@@ -189,29 +212,61 @@ class OpenCityForm extends React.Component{
                 span: 5
             },
             wrapperCol: {
+                offset: 1,
                 span: 19
             }
         }
+        const formCityLayout = {
+            labelCol: {
+                span: 5
+            },
+            wrapperCol: {
+                offset: 1,
+                span: 8
+            }
+        }
+        const {sendValues, cancelModal} = this.props
         return (
-            <Form layout="horizontal">
-                <FormItem label="选择城市" {...formItemLayout}>
-                    <Select style={{ width: 100 }}>
-                        <Option value="">全部</Option>
-                        <Option value="1">北京市</Option>
-                        <Option value="2">天津市</Option>
+            <Form
+                layout="horizontal"
+                preserve={false}
+                initialValues={{
+                    'openCity': '100',
+                    'bikeUsePattern': 1,
+                    'operatPattern': 1,
+                }}
+                onFinish={values => sendValues(values)}
+            >
+                <FormItem name="openCity" label="开通城市" {...formCityLayout}>
+                    <Select placeholder="请选择开通城市">
+                        {
+                            CITYENUM.map((item, index) => {
+                                return <Option key={index} value={item.value}>{item.label}</Option>
+                            })
+                        }
                     </Select>
                 </FormItem>
-                <FormItem label="营运模式" {...formItemLayout}>
-                    <Select style={{ width: 100 }}>
-                        <Option value="1">自营</Option>
-                        <Option value="2">加盟</Option>
-                    </Select>
+                <FormItem name="bikeUsePattern" label="用车模式" {...formItemLayout}>
+                    <Radio.Group>
+                        {
+                            BIKEUSEPATTERN.map((item, index) => {
+                                return <Radio key={index} value={item.value}>{item.label}</Radio>
+                            })
+                        }
+                    </Radio.Group>
                 </FormItem>
-                <FormItem label="用车模式" {...formItemLayout}>
-                    <Select style={{ width: 100 }}>
-                        <Option value="1">指定停车点</Option>
-                        <Option value="2">禁停区</Option>
-                    </Select>
+                <FormItem name="operatPattern" label="营运模式" {...formItemLayout}>
+                    <Radio.Group>
+                        {
+                            OPERATEPATTERN.map((item, index) => {
+                                return <Radio key={index} value={item.value}>{item.label}</Radio>
+                            })
+                        }
+                    </Radio.Group>
+                </FormItem>
+                <FormItem wrapperCol={{offset: 12, span: 24}}>
+                    <Button type="primary" style={{margin:'0 20px'}} htmlType="submit">保存</Button>
+                    <Button onClick={cancelModal}>取消</Button>
                 </FormItem>
             </Form>
         )
