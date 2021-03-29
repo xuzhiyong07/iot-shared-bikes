@@ -6,11 +6,16 @@ import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
 import store from './store'
 import 'antd/dist/antd.css'
+import { ConfigProvider } from 'antd'
+import 'moment/locale/zh-cn'
+import locale from 'antd/lib/locale/zh_CN'
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Router />
-  </Provider>,
+  <ConfigProvider locale={locale}>
+    <Provider store={store}>
+      <Router />
+    </Provider>
+  </ConfigProvider>,
   document.getElementById('root')
 );
 

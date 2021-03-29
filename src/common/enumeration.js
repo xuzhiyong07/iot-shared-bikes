@@ -55,3 +55,11 @@ export const CITYENUM = [
     { label: '青海', value: '971' },
     { label: '新疆', value: '991' }
 ]
+
+/**
+ * 订单状态
+ */
+export const ORDERSTATUS = [
+    { label: '使用中', value: 0 },
+    { label: '已结束', value: 1 }
+]

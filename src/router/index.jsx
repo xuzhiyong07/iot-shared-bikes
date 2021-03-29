@@ -1,16 +1,10 @@
 import React, { Component } from 'react'
-import {
-    HashRouter,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
+import { HashRouter, Route, Switch, Redirect } from 'react-router-dom'
 import App from '../App'
 import Login from '../pages/login'
 import Admin from '../Admin'
-import Home from '../pages/home'
-import City from '../pages/city'
 import NotFound from '../pages/notfound'
+import routes from './routes'
 
 const loggedIn = true
 export default class IRouter extends Component {
@@ -26,8 +20,11 @@ export default class IRouter extends Component {
                         <Admin>
                             <Switch>
                                 <Route exact path="/admin" render={() => <Redirect to="/admin/home" />} />
-                                <Route path="/admin/home" component={Home} />
-                                <Route path="/admin/city" component={City} />
+                                {
+                                    routes.map((route, index) => {
+                                        return <Route key={index} path={route.path} component={route.component} />
+                                    })
+                                }
                                 <Route component={NotFound} />
                             </Switch>
                         </Admin>

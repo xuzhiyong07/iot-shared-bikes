@@ -1,6 +1,6 @@
 /**
  * 请求
- * @author xuzhiy
+ * @author Mars
  */
 
 const timeout = 10 * 1000

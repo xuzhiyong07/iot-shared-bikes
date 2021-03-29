@@ -1,11 +1,8 @@
 import React, { Component } from 'react'
-import {
-    Row,
-    Col,
-    Button
-} from 'antd'
+import { Row, Col, Button, Modal } from 'antd'
+import { ExclamationCircleOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 import './index.less'
-// import fetchJsonp from 'fetch-jsonp'
+
 const AMap = window.AMap
 export default class index extends Component {
     state = {
@@ -29,7 +26,7 @@ export default class index extends Component {
     
 
     componentWillUnmount() {
-        clearTimeout(this.dateInterval)
+        clearInterval(this.dateInterval)
     }
 
     /**
@@ -50,17 +47,43 @@ export default class index extends Component {
                 _this.setState({
                     whether: data
                 })
-            });
+            })
+        })
+    }
+
+
+
+    /**
+     * 退出确认
+     */
+     logoutConfirm () {
+        Modal.confirm({
+            title: '提示',
+            icon: <ExclamationCircleOutlined />,
+            content: '是否确认退出？',
+            onOk: () => {
+                window.location.hash = 'login'
+            },
+            okText: '确认',
+            cancelText: '取消'
         })
     }
 
     render() {
+        const { inlineCollapsed, changeInlineCollapsed } = this.props
         return (
             <div className="header">
                 <Row className="header-top">
                     <Col span="24" className="header-content">
-                        <span>你好，{ this.state.userName }</span>
-                        <Button type="link" className="logout">退出</Button>
+                        <Button
+                            className="collapsed"
+                            onClick={() => changeInlineCollapsed(!inlineCollapsed)}
+                            icon={inlineCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                        ></Button>
+                        <div>
+                            <span>你好，{ this.state.userName }</span>
+                            <Button type="link" onClick={this.logoutConfirm} className="logout">退出</Button>
+                        </div>
                     </Col>
                 </Row>
                 <Row className="breadcrumb">

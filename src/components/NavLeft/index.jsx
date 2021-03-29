@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import menuList from '../../config/menuConfig'
-import {
-    NavLink
-} from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { Menu } from 'antd'
 import MyIcon from '../../components/IconFont'
 import './index.less'
@@ -50,17 +48,21 @@ export default class index extends Component {
     }
 
     render() {
+        const {inlineCollapsed} = this.props
         return (
             <div>
                 <div className="logo">
                     <img src="/assets/logo-ant.svg" alt=""/>
-                    <h1>IOT-BIKE</h1>
+                    {
+                        !inlineCollapsed && <h1>IOT-BIKE</h1>
+                    }
                 </div>
                 <Menu
                     theme="dark"
                     triggerSubMenuAction="click"
                     mode="inline"
                     selectedKeys={ this.state.selectedKeys }
+                    inlineCollapsed={inlineCollapsed}
                 >
                     { this.state.menuTreeNodes }
                 </Menu>
